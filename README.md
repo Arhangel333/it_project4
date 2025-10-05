@@ -39,7 +39,7 @@ docker-compose up -d
 
 После запуска доступны:
 
-· Swagger UI: http://localhost:8000/docs
+· Swagger UI: http://localhost:8000/docs  
 · ReDoc: http://localhost:8000/redoc
 
 🎯 API Эндпоинты
