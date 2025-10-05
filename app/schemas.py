@@ -2,23 +2,23 @@ from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 from typing import Optional
 
-# 🎯 Базовая схема (общие поля для всех)
+# Базовая схема (общие поля для всех)
 class TaskBase(BaseModel):
     title: str
     description: Optional[str] = None
     completed: bool = False
 
-# 🆕 Для создания задачи
+# Для создания задачи
 class TaskCreate(TaskBase):
     pass
 
-# 🔄 Для обновления задачи
+# Для обновления задачи
 class TaskUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     completed: Optional[bool] = None
 
-# 📊 Для чтения задачи
+# Для чтения задачи
 class Task(TaskBase):
     id: int
     created_at: datetime
