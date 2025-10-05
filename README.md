@@ -210,8 +210,6 @@ curl http://localhost:8000/stats/
 
 👨‍💻 Автор
 
-Max Kar
-
 · GitHub: @Arhangel333
 
 ---
