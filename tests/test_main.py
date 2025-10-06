@@ -81,3 +81,67 @@ def test_create_task_comprehensive(client):
     task2 = client.post("/tasks/", json={"title": "Задача 2"}).json()
     
     assert task2["id"] == task1["id"] + 1
+
+def test_read_single_task_success(client):
+    """Тест успешного получения одной задачи по ID"""
+    # Создаём задачу
+    task_data = {"title": "Тестовая задача для чтения", "description": "Описание"}
+    create_response = client.post("/tasks/", json=task_data)
+    task_id = create_response.json()["id"]
+    
+    # Читаем задачу
+    response = client.get(f"/tasks/{task_id}")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == task_id
+    assert data["title"] == "Тестовая задача для чтения"
+    assert data["description"] == "Описание"
+
+def test_update_task_full(client):
+    """Тест полного обновления задачи"""
+    # Создаём задачу
+    task = client.post("/tasks/", json={
+        "title": "Старый заголовок",
+        "description": "Старое описание",
+        "completed": False
+    }).json()
+    
+    # Полностью обновляем
+    update_data = {
+        "title": "Новый заголовок",
+        "description": "Новое описание", 
+        "completed": True
+    }
+    response = client.put(f"/tasks/{task['id']}", json=update_data)
+    
+    assert response.status_code == 200
+    updated_task = response.json()
+    assert updated_task["title"] == "Новый заголовок"
+    assert updated_task["description"] == "Новое описание"
+    assert updated_task["completed"] == True
+
+
+def test_delete_task_verify_removed_from_list(client):
+    """Тест что удалённая задача исчезает из общего списка"""
+    # Получаем начальное количество задач
+    initial_response = client.get("/tasks/")
+    initial_tasks = initial_response.json()
+    initial_count = len(initial_tasks)
+
+    # Создаём несколько задач
+    task1 = client.post("/tasks/", json={"title": "Задача 1"}).json()
+    task2 = client.post("/tasks/", json={"title": "Задача 2"}).json()
+    
+    # Получаем начальный список
+    initial_response = client.get("/tasks/")
+    initial_tasks = initial_response.json()
+    assert len(initial_tasks) == initial_count + 2
+    
+    # Удаляем одну задачу
+    delete_response = client.delete(f"/tasks/{task1['id']}")
+    assert delete_response.status_code == 200
+    
+    # Проверяем обновлённый список
+    final_response = client.get("/tasks/")
+    final_tasks = final_response.json()
+    assert len(final_tasks) == initial_count + 1
